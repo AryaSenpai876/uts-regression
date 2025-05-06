@@ -1,10 +1,17 @@
 ---
 title: "Analisis Korelasi Konsumsi Minyak Pemanas Rumah"
+author: "Arya Senpai"
+date: "`r Sys.Date()`"
 output:
   html_document:
+    theme: readable
+    toc: true
+    toc_float: true
+bibliography: references.bib
 ---
 
-### oleh Arya Yuda
+
+- Rekayasa Perangkat Lunak - Institut Teknologi Statistika dan bisnis Muhammadiyah Semarang
 
 ## Latar Belakang
 
@@ -159,7 +166,7 @@ Plot ini membantu Sarah memahami lebih baik bagaimana kondisi suhu dan insulasi 
 
 Untuk strategi pemasaran minyak pemanas, analisis korelasi dan hasil scatter plot dapat memberikan wawasan berharga. Pertimbangkan untuk menargetkan kampanye pemasaran berdasarkan suhu dan kualitas insulasi rumah. Misalnya, fokus pada rumah dengan insulasi buruk di daerah dingin, menawarkan diskon atau promosi untuk meningkatkan penjualan. Selain itu, edukasi konsumen tentang pentingnya insulasi yang baik untuk mengurangi konsumsi minyak.
 
-## Soal 2
+# Soal 2
 ### Yang harus dilakukan oleh `Sarah`
 
 1. Membuat dan Membaca Dataset HeatingOil.csv
