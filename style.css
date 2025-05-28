@@ -1,43 +1,5 @@
-
-body {
-  background-color: #9FB3DF;
-  color: #2c3e50;
-  font-family: Arial, sans-serif;
-}
-h1, h2, h3, h4, h5, h6 {
-  color: #FFF1D5;
-}
-a {
-  color: #3498db;
-}
 pre, code {
-  background-color: #2c3e50;
-  color: #ecf0f1;
-}
-.table {
-  color: #ecf0f1;
-}
-.output, .r-output {
-  background-color: #2c3e50 !important;
-  color: #ecf0f1 !important;
-  padding: 10px;
+  background-color: #darkgray !important;
+  color: #000000;
   border-radius: 5px;
-}
-
-/* custom-style.css */
-
-/* Gaya untuk code chunk (boxed code) */
-pre, pre code {
-  background-color: #9EC6F3 !important;  /* latar belakang hitam */
-  color: #000000 !important;             /* teks putih */
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-}
-
-/* Opsional: ubah warna teks output console */
-.output pre {
-  color: #00ffcc;
-  background-color: #111111;
-  border: 1px solid #ffffff;
 }
