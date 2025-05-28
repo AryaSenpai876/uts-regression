@@ -10,271 +10,112 @@ output:
 bibliography: references.bib
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(readr)
+library(scales)
+```
 
-- Rekayasa Perangkat Lunak - Institut Teknologi Statistika dan bisnis Muhammadiyah Semarang
+# Analisis Konsumsi Minyak Pemanas Rumah
 
-## Latar Belakang
+## Korelasi & Visualisasi
 
-Sarah adalah manajer penjualan yang ingin mempelajari hubungan antara berbagai faktor yang memengaruhi konsumsi minyak pemanas rumah. Data yang digunakan terdiri dari variabel berikut:
-
-- Heating_Oil: Jumlah total minyak pemanas yang dibeli selama satu tahun terakhir.
-- Insulation: Skor kepadatan insulasi rumah (1-10).
-- Temperature: Rata-rata suhu udara luar (derajat Fahrenheit).
-- Num_Occupants: Jumlah penghuni rumah.
-- Avg_Age: Rata-rata usia penghuni.
-- Home_Size: Ukuran rumah (1-8).
-
-# Soal 1
-
-## Langkah Satu
-
-### Data Contoh
+### Matriks Korelasi
 
 ```{r}
-# Membuat data contoh
-data <- data.frame(
-  Heating_Oil = c(500, 600, 700, 800, 900, 1000),
-  Insulation = c(5, 6, 7, 8, 9, 10),
-  Temperature = c(30, 32, 35, 28, 25, 20),
-  Num_Occupants = c(2, 3, 4, 3, 5, 6),
-  Avg_Age = c(30, 35, 40, 45, 50, 55),
-  Home_Size = c(3, 4, 5, 6, 7, 8)
-)
-head(data)
+data <- read_csv("HeatingOil.csv")
 
-# Menghitung matriks korelasi
-cor_matrix <- cor(data)
+vars <- data %>%
+  select(Heating_Oil, Insulation, Temperature, Num_Occupants, Avg_Age, Home_Size)
+
+cor_matrix <- cor(vars)
+
 cor_matrix
 
-library(ggplot2)
-library(reshape2)
-
-# Mengubah matriks korelasi menjadi format long untuk ggplot
-cor_data <- melt(cor_matrix)
-
-# Membuat heatmap dengan ggplot2
-ggplot(data = cor_data, aes(x = Var1, y = Var2, fill = value)) +
-  geom_tile(color = "white") +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0,
-                       limit = c(-1,1), space = "Lab", name = "Korelasi") +
-  geom_text(aes(label = sprintf("%.2f", value)), color = "black", size = 5) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size=12),
-        axis.text.y = element_text(size=12)) +
-  coord_fixed() +
-  labs(title = "Heatmap Matriks Korelasi",
-       x = "",
-       y = "")
-```
-
-## Langkah Dua
-
-### Interpretasi Korelasi Matrix
-
-Berikut adalah penjelasan yang lebih mendetail mengenai hasil matriks korelasi dan variabel-variabel yang memiliki korelasi signifikan dengan jumlah konsumsi `Heating_Oil`.
-
-Hasil Matriks Korelasi:
-Matriks korelasi adalah alat yang digunakan untuk mengukur seberapa kuat hubungan antara dua variabel. Nilai korelasi berkisar antara -1 hingga 1:
-
-`Nilai 1` : menunjukkan hubungan positif sempurna (ketika satu variabel meningkat, variabel lainnya juga meningkat).
-
-`Nilai -1` : menunjukkan hubungan negatif sempurna (ketika satu variabel meningkat, variabel lainnya menurun).
-
-`Nilai 0` : menunjukkan tidak ada hubungan antara kedua variabel.
-Variabel yang Memiliki Korelasi Signifikan dengan Heating_Oil
-Insulation:
-
-`Korelasi : Positif (misalnya, 0.85)`
-
-Penjelasan: Semakin tinggi skor insulasi rumah, semakin banyak minyak pemanas yang dibeli. Ini mungkin karena rumah dengan insulasi yang baik lebih efisien dalam mempertahankan panas, sehingga pemilik rumah merasa perlu membeli lebih sedikit minyak pemanas. Namun, jika insulasi sangat baik, mereka mungkin membeli lebih banyak untuk menjaga kenyamanan.
-Temperature:
-
-`Korelasi: Negatif (misalnya, -0.75)`
-
-Penjelasan: Rata-rata suhu luar yang lebih tinggi cenderung mengurangi kebutuhan akan minyak pemanas. Ketika suhu lebih hangat, pemilik rumah mungkin tidak perlu menggunakan pemanas sebanyak saat suhu lebih dingin, sehingga konsumsi minyak pemanas berkurang.
-Num_Occupants:
-
-`Korelasi: Positif (misalnya, 0.65)`
-
-Penjelasan: Jumlah penghuni rumah yang lebih banyak biasanya berhubungan dengan konsumsi minyak pemanas yang lebih tinggi. Hal ini bisa disebabkan oleh lebih banyak orang yang tinggal di rumah, sehingga kebutuhan akan pemanas meningkat untuk menjaga kenyamanan semua penghuni.
-Avg_Age:
-
-`Korelasi: Negatif (misalnya, -0.40)`
-
-Penjelasan: Rata-rata usia penghuni yang lebih tinggi mungkin berhubungan dengan konsumsi minyak pemanas yang lebih rendah. Hal ini bisa jadi karena penghuni yang lebih tua mungkin lebih cenderung untuk menggunakan metode pemanasan alternatif atau lebih sadar akan efisiensi energi.
-Home_Size:
-
-`Korelasi: Positif (misalnya, 0.55)`
-
-Penjelasan: Ukuran rumah yang lebih besar cenderung membutuhkan lebih banyak minyak pemanas. Rumah yang lebih besar memiliki lebih banyak ruang untuk dipanaskan, sehingga pemilik rumah perlu membeli lebih banyak minyak pemanas untuk menjaga suhu yang nyaman.
-Kesimpulan
-Dari analisis matriks korelasi, kita dapat menyimpulkan bahwa beberapa variabel memiliki pengaruh signifikan terhadap konsumsi Heating_Oil. Variabel Insulation dan Num_Occupants menunjukkan hubungan positif yang kuat, sementara Temperature menunjukkan hubungan negatif yang signifikan. Ini berarti bahwa untuk meningkatkan strategi pemasaran, Sarah harus mempertimbangkan faktor-faktor ini. Misalnya, meningkatkan kesadaran tentang pentingnya insulasi yang baik dan menargetkan rumah dengan banyak penghuni dapat membantu meningkatkan penjualan minyak pemanas. Selain itu, memahami pola konsumsi berdasarkan suhu luar dapat membantu dalam merencanakan promosi dan penawaran yang lebih efektif.
-
-## Langkah Tiga
-### Scatter Plot antara Heating_Oil dan Avg_Age
-
-```{r message=FALSE, warning=FALSE}
-library(ggplot2)
-
-ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
-  geom_point(size = 4) +
-  scale_color_gradient(low = "blue", high = "red") +
-  labs(title = "Scatter Plot antara Heating_Oil dan Avg_Age",
-       x = "Jumlah Konsumsi Heating Oil",
-       y = "Usia Rata-rata Penghuni Rumah",
-       color = "Heating Oil") +
-  theme_minimal()
-```
-
-### Penjelasan Hasil Scatter Plot 1
-
-Scatter plot di atas menunjukkan hubungan antara usia rata-rata penghuni rumah (Avg_Age) dengan jumlah konsumsi minyak pemanas (Heating_Oil). Warna titik mewakili intensitas konsumsi minyak pemanas, dengan warna biru menunjukkan nilai yang lebih rendah dan warna merah menunjukkan nilai yang lebih tinggi.
-
-Dari grafik ini, dapat diobservasi apakah ada pola tertentu. Misalnya, jika titik-titik berwarna merah terkonsentrasi pada usia tertentu, itu berarti konsumsi minyak pemanas lebih tinggi pada kelompok usia tersebut. Atau jika tidak ada pola jelas, maka usia mungkin tidak memiliki hubungan yang kuat dengan konsumsi minyak.
-
-Grafik ini membantu Sarah untuk mengevaluasi apakah faktor usia penghuni berkontribusi signifikan dalam kebiasaan penggunaan minyak pemanas, sebagai bahan pertimbangan dalam merencanakan strategi pemasaran yang ditargetkan.
-
-## Langkah Empat
-### Scatter Plot 2 - Scatter Plot antara Temperature dan Insulation
-
-```{r message=FALSE, warning=FALSE}
-ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
-  geom_point(size = 4) +
-  scale_color_gradient(low = "blue", high = "red") +
-  labs(title = "Scatter Plot antara Temperature dan Insulation",
-       x = "Rata-rata Suhu Lingkungan (Fahrenheit)",
-       y = "Skor Kepadatan Insulasi Rumah",
-       color = "Heating Oil") +
-  theme_minimal()
-```
-
-### Penjelasan Scatter Plot 2
-
-Scatter plot ini memperlihatkan hubungan antara suhu lingkungan sekitar rumah `(Temperature)` dan kualitas insulasi rumah `(Insulation)`, dengan warna titik menunjukkan intensitas konsumsi minyak pemanas (Heating_Oil).
-
-Dari plot tersebut, pola warna dapat membantu mengidentifikasi bagaimana kombinasi suhu dan insulasi memengaruhi konsumsi minyak. Misalnya:
-
-- Titik berwarna merah (konsumsi Heating_Oil tinggi) bisa terkonsentrasi pada suhu rendah dan insulasi kurang baik, yang menunjukkan bahwa rumah dengan insulasi buruk pada suhu dingin cenderung menggunakan minyak pemanas lebih banyak.
-
-- Sebaliknya, titik biru (konsumsi rendah) mungkin muncul pada suhu lebih tinggi atau insulasi yang baik, menunjukkan konsumsi minyak yang lebih sedikit.
-
-Plot ini membantu Sarah memahami lebih baik bagaimana kondisi suhu dan insulasi bersama-sama memengaruhi kebutuhan minyak pemanas, sehinggax strategi pemasaran dapat disesuaikan berdasarkan faktor-faktor tersebut.
-
-## Langkah Lima
-
-### Rekomendasi Untuk Sarah
-
-Untuk strategi pemasaran minyak pemanas, analisis korelasi dan hasil scatter plot dapat memberikan wawasan berharga. Pertimbangkan untuk menargetkan kampanye pemasaran berdasarkan suhu dan kualitas insulasi rumah. Misalnya, fokus pada rumah dengan insulasi buruk di daerah dingin, menawarkan diskon atau promosi untuk meningkatkan penjualan. Selain itu, edukasi konsumen tentang pentingnya insulasi yang baik untuk mengurangi konsumsi minyak.
-
-# Soal 2
-### Yang harus dilakukan oleh `Sarah`
-
-1. Membuat dan Membaca Dataset HeatingOil.csv
-
-```{r message=FALSE, warning=FALSE}
-# Membuat dataset sintetis
-set.seed(123)  # Untuk reproduktifitas
-
-# Jumlah sampel
-n <- 100
-
-# Menghasilkan data sintetis
-HeatingOil <- data.frame(
-  Heating_Oil = rnorm(n, mean = 500, sd = 100),  # Variabel target
-  Insulation = sample(1:10, n, replace = TRUE),  # Skor insulasi (1-10)
-  Temperature = rnorm(n, mean = 50, sd = 10),    # Suhu rata-rata
-  Num_Occupants = sample(1:5, n, replace = TRUE), # Jumlah penghuni
-  Avg_Age = rnorm(n, mean = 40, sd = 15),         # Usia rata-rata penghuni
-  Home_Size = rnorm(n, mean = 2000, sd = 500)     # Ukuran rumah dalam kaki persegi
+corrplot(
+  cor_matrix, 
+  method = "color",
+  background.col = "black",
+  bg = "red",              # Latar belakang gelap
+  tl.col = "black",           # Warna label
+  addCoef.col = "black",      # Warna angka korelasi
+  number.cex = 0.7,
+  tl.cex = 0.8
 )
-
-# Menyimpan dataset sintetis ke file CSV
-write.csv(HeatingOil, "HeatingOil.csv", row.names = FALSE)
-
-cat("Dataset sintetis HeatingOil.csv telah dibuat.\n")
 ```
-2. MMembuat model regresi linear dan melihat ringkasan model
 
-```{r message=FALSE, warning=FALSE}
+### Interpretasi Korelasi
+
+- Temperature negatif dengan Heating_Oil
+- Insulation negatif
+- Home_Size positif
+
+Faktor suhu, insulasi, dan ukuran rumah memengaruhi konsumsi energi.
+
+### Visualisasi Heating_Oil vs Avg_Age
+
+```{r}
+ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.9) +
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(
+    title = "Heating Oil vs Avg Age",
+    x = "Heating Oil",
+    y = "Average Age",
+    color = "Heating Oil"
+  ) +
+  theme_minimal(base_family = "Arial")
+```
+
+### Visualisasi Temperature vs Insulation
+
+```{r}
+ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.9) +
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(
+    title = "Temperature vs Insulation",
+    x = "Temperature (F)",
+    y = "Insulation Score",
+    color = "Heating Oil"
+  ) +
+  theme_minimal(base_family = "Arial")
+```
+
+### Rekomendasi
+
+Target rumah:
+- Suhu rendah
+- Insulasi rendah
+- Ukuran besar
+
+## Model Prediktif
+
+### Model Regresi
+
+```{r}
 model <- lm(Heating_Oil ~ Insulation + Temperature + Num_Occupants + Avg_Age + Home_Size, data = data)
-
 summary(model)
 ```
 
-3. Menyimpan model ke file .rds agar tidak perlu membagikan data asli
-```{r message=FALSE, warning=FALSE}
-saveRDS(model, file = "heating_oil_model.rds")
+### Simpan Model
 
-cat("Model berhasil dibuat dan disimpan ke heating_oil_model.rds\n")
-
+```{r}
+saveRDS(model, file = "model_heating_oil.rds")
 ```
 
-### Yang Harus Dilakukan Oleh `Marketer`
+### Aplikasi Model untuk Prediksi
 
-1. Membaca model yang sudah disimpan oleh Sarah
-```{r message=FALSE, warning=FALSE}
-model <- readRDS("heating_oil_model.rds")
+```{r}
+model_loaded <- readRDS("model_heating_oil.rds")
+marketing_data <- read_csv("HeatingOil-Marketing.csv")
+marketing_data$Predicted_Heating_Oil <- predict(model_loaded, newdata = marketing_data)
+head(marketing_data)
 ```
 
-2. Membuat data calon pelanggan baru
+### Penutup
 
-```{r message=FALSE, warning=FALSE}
-# Membuat dataset sintetis untuk pelanggan baru
-set.seed(456)  # Untuk reproduktifitas
-
-# Jumlah sampel untuk pelanggan baru
-n_new <- 20
-
-# Menghasilkan data sintetis untuk pelanggan baru
-new_customers <- data.frame(
-  Insulation = sample(1:10, n_new, replace = TRUE),  # Skor insulasi (1-10)
-  Temperature = rnorm(n_new, mean = 50, sd = 10),     # Suhu rata-rata
-  Num_Occupants = sample(1:5, n_new, replace = TRUE), # Jumlah penghuni
-  Avg_Age = rnorm(n_new, mean = 40, sd = 15),         # Usia rata-rata penghuni
-  Home_Size = rnorm(n_new, mean = 2000, sd = 500)     # Ukuran rumah dalam kaki persegi
-)
-
-# Menyimpan dataset pelanggan baru ke file CSV
-write.csv(new_customers, "HeatingOil-Marketing.csv", row.names = FALSE)
-
-cat("Dataset sintetis HeatingOil-Marketing.csv untuk pelanggan baru telah dibuat.\n")
-```
-
-- Membaca data calon pelanggan baru
-
-```{r message=FALSE, warning=FALSE}
-new_data <- read.csv("HeatingOil-Marketing.csv")
-```
-
-3. Menerapkan model ke data calon pelanggan baru untuk memprediksi kebutuhan minyak pemanas
-
-```{r message=FALSE, warning=FALSE}
-predictions <- predict(model, newdata = new_data)
-```
-
-- Menambahkan kolom prediksi ke data calon pelanggan
-
-```{r message=FALSE, warning=FALSE}
-new_data$Predicted_Heating_Oil <- predictions
-```
-
-- Menyimpan hasil prediksi ke file baru
-
-```{r message=FALSE, warning=FALSE}
-write.csv(new_data, file = "Predicted_HeatingOil-Marketing.csv", row.names = FALSE)
-
-cat("Prediksi kebutuhan minyak pemanas berhasil disimpan ke Predicted_HeatingOil-Marketing.csv\n")
-```
-
-### Penjelasan Proses
-`Sarah` :
-
-Membaca data dari HeatingOil.csv dan membuat model regresi linear untuk memprediksi konsumsi minyak pemanas berdasarkan variabel yang relevan.
-Menyimpan model ke dalam file .rds agar dapat digunakan oleh marketer tanpa harus membagikan data asli.
-
-`Marketer` :
-
-Membaca model yang telah disimpan oleh Sarah.
-Membaca data calon pelanggan baru dari HeatingOil-Marketing.csv.
-Menggunakan model untuk memprediksi kebutuhan minyak pemanas untuk setiap calon pelanggan dan menyimpan hasil prediksi ke file baru.
-Dengan cara ini, Sarah dapat menjaga kerahasiaan data asli sambil memberikan alat yang diperlukan kepada tim marketing untuk melakukan estimasi kebutuhan minyak pemanas.
+Prediksi konsumsi minyak dapat dilakukan tanpa akses data asli. Proses ini aman dan efektif untuk tim pemasaran.
